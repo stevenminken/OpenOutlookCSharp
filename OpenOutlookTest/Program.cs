@@ -37,7 +37,7 @@ void CreateSendItem(Outlook.Application oApp)
 
         //Schrijft rtf file naar bestand
         StiRtfExportSettings rtfSettings = new StiRtfExportSettings();
-        rtfSettings.ImageQuality = 1;
+        rtfSettings.ImageQuality = 1.0f;
         report.ExportDocument(StiExportFormat.Rtf, "c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.rtf", rtfSettings);
 
         Console.WriteLine("The export action is complete.", "Export Report");
