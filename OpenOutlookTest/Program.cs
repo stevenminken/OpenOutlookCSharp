@@ -22,23 +22,16 @@ void CreateSendItem(Outlook.Application oApp)
 
     try
     {
-        //Pad naar het mrt bestand
-        string[] paths = { "c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.mrt"};
-        string fullPath = Path.Combine(paths);
-
         //creert nieuwe instantie van StiReport
         report = new StiReport();
-        report.Load(fullPath);
+        report.Load("c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.mrt");
         report.Render(false);
-
-        //Schrijft html file naar bestand
-        //StiHtmlExportSettings htmlSettings = new StiHtmlExportSettings();
-        //report.ExportDocument(StiExportFormat.Html, "c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.html", htmlSettings);
 
         //Schrijft rtf file naar bestand
         StiRtfExportSettings rtfSettings = new StiRtfExportSettings();
+        MemoryStream memoryStream = new MemoryStream();
         rtfSettings.ImageQuality = 1.0f;
-        report.ExportDocument(StiExportFormat.Rtf, "c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.rtf", rtfSettings);
+        report.ExportDocument(StiExportFormat.Rtf, memoryStream, rtfSettings);
 
         Console.WriteLine("The export action is complete.", "Export Report");
 
@@ -46,11 +39,16 @@ void CreateSendItem(Outlook.Application oApp)
         mailItem.To = "stevenminken@hotmail.com";
         mailItem.Subject = "A programatically generated e-mail";
         mailItem.BodyFormat = Outlook.OlBodyFormat.olFormatRichText;
-        mailItem.RTFBody = System.Text.Encoding.ASCII.GetBytes(File.ReadAllText("c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.rtf"));
-        //mailItem.HTMLBody = File.ReadAllText("c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.html");
-
+        mailItem.RTFBody = memoryStream.ToArray();
+        memoryStream.Flush();
         mailItem.Display();
 
+        //HTML code ter info, rendered niet goed
+        //StiHtmlExportSettings htmlSettings = new StiHtmlExportSettings();
+        //report.ExportDocument(StiExportFormat.Html, "c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.html", htmlSettings);
+
+        //mailItem.BodyFormat = Outlook.OlBodyFormat.olFormatHTML;
+        //mailItem.HTMLBody = File.ReadAllText("c:\\Users\\Steven\\Documents\\Reports\\KleinBevestigingDatumTijd.html");
     }
     catch (Exception ex)
     {
